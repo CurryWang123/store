@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.store.mapper.OrderMapper">
+    <resultMap id="orderResponse" type="com.cy.store.vo.OrderResponse">
+        <id property="oid" column="oid"></id>
+        <result column="uid" property="uid" />
+        <result column="recv_name" property="recvName"/>
+        <result column="recv_phone" property="recvPhone"/>
+        <result column="status" property="status"/>
+        <result column="recv_province" property="recvProvince"/>
+        <result column="recv_city" property="recvCity"/>
+        <result column="recv_area" property="recvArea"/>
+        <result column="recv_address" property="recvAddress"/>
+        <result column="total_price" property="totalPrice"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="order_time" property="orderTime"/>
+        <result column="created_user" property="createdUser"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="modified_user" property="modifiedUser"/>
+        <result column="modified_time" property="modifiedTime"/>
+        <collection property="orderItemList"  column="oid" ofType="com.cy.store.entity.OrderItem">
+            <id property="id" column="id"></id>
+            <result property="title" column="title"/>
+            <result property="pid" column="pid"/>
+            <result property="image" column="image"/>
+            <result property="price" column="price"/>
+            <result property="num" column="num"/>
+        </collection>
+    </resultMap>
+
+
+    <!-- 插入订单数据：Integer insertOrder(Order order) -->
+    <insert id="insertOrder" useGeneratedKeys="true" keyProperty="oid">
+        INSERT INTO t_order (
+            uid, recv_name, recv_phone, recv_province, recv_city, recv_area, recv_address,
+            total_price,status, order_time,pay_time, created_user, created_time, modified_user,
+            modified_time
+        ) VALUES (
+            #{uid}, #{recvName}, #{recvPhone}, #{recvProvince}, #{recvCity}, #{recvArea},
+            #{recvAddress}, #{totalPrice}, #{status}, #{orderTime}, #{payTime}, #{createdUser},
+            #{createdTime}, #{modifiedUser}, #{modifiedTime}
+        )
+    </insert>
+
+    <!-- 插入订单商品数据：Integer insertOrderItem(OrderItem orderItem) -->
+    <insert id="insertOrderItem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_order_item (
+            oid, pid, title, image, price, num, created_user,
+            created_time, modified_user, modified_time
+        ) VALUES (
+            #{oid}, #{pid}, #{title}, #{image}, #{price}, #{num}, #{createdUser},
+            #{createdTime}, #{modifiedUser}, #{modifiedTime}
+        )
+    </insert>
+
+<!--    分页查询订单及其商品列表-->
+    <select id="pageOrderListItem" resultMap="orderResponse">
+        SELECT o.oid,o.uid,o.recv_name,o.recv_city,o.recv_area,o.recv_province,o.recv_phone,o.recv_address,o.total_price,o.status,o.pay_time,o.order_time,oi.title,oi.price,oi.pid,oi.num,oi.image
+        FROM t_order o inner join t_order_item oi on o.oid=oi.oid where o.uid=#{orderResponse.uid}
+        <if test="orderResponse.status != null">
+            and o.status = #{orderResponse.status}
+        </if>
+    </select>
+
+<!--    更新订单状态-->
+    <update id="updateOrderStatus">
+        update t_order set status=#{status} where oid=#{oid}
+    </update>
+
+    <select id="getOrderListItem" resultMap="orderResponse">
+        SELECT o.oid,o.uid,o.recv_name,o.recv_city,o.recv_area,o.recv_province,o.recv_phone,o.recv_address,o.total_price,o.status,o.pay_time,o.order_time,oi.title,oi.price,oi.pid,oi.num,oi.image
+        FROM t_order o inner join t_order_item oi on o.oid=oi.oid where o.uid=#{orderResponse.uid}
+        <if test="orderResponse.oid != null">
+            and o.oid = #{orderResponse.oid}
+        </if>
+    </select>
+</mapper>

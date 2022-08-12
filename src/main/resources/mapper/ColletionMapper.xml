@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.store.mapper.CollectionMapper">
+    <select id="selectColletions" resultType="com.cy.store.vo.ColletionVO">
+        SELECT c.collect_id,p.collection_num,c.uid,c.pid,p.price,p.title,p.image
+        FROM t_collection c
+        inner JOIN t_product p
+        on c.pid=p.id
+        where c.uid=#{uid}
+    </select>
+
+    <delete id="deleteCollection">
+        delete  from t_collection where collect_id=#{collectId}
+    </delete>
+
+    <insert id="addCollection" parameterType="com.cy.store.entity.Collection">
+        INSERT into t_collection(uid,pid,created_user,created_time)
+        VALUES (#{uid},#{pid},#{createdUser},#{createdTime})
+    </insert>
+</mapper>

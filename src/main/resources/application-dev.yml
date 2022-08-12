@@ -1,0 +1,47 @@
+#开启sql日志
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#上下文路径
+server:
+  tomcat:
+    multipart:
+      max-file-size: 100MB
+  servlet:
+    context-path: /store
+  port: 8089
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  datasource:
+    url: jdbc:mysql://localhost:3306/store?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  application:
+    name: store-center
+
+mybatis:
+  config-location: classpath:mapper/*.xml
+
+user:
+  address:
+    max-count: 20
+
+nacos:
+  config:
+    server-addr: localhost:8848
+    group: DEFAULT_GROUP
+    bootstrap:
+      enable: true
+    type: yaml
+    username: nacos
+    password: nacos
+    remote-first: true
+    data-ids: store-center
+
+logging:
+  level:
+    com.alibaba.nacos.client.config.impl: WARN
